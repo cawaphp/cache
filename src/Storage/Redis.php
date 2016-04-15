@@ -13,7 +13,7 @@ declare (strict_types=1);
 
 namespace Cawa\Cache\Storage;
 
-use Cawa\Uri\Uri;
+use Cawa\Net\Uri;
 
 class Redis extends AbstractStorage
 {
