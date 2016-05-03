@@ -56,7 +56,7 @@ class Cache
     /**
      * @param array $config
      *
-     * @return static
+     * @return $this
      */
     public static function create($config) : self
     {
