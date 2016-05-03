@@ -18,11 +18,6 @@ use Cawa\Core\DI;
 trait CacheFactory
 {
     /**
-     * @var array
-     */
-    private static $container = [];
-
-    /**
      * @param string $name
      *
      * @return Cache
