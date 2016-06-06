@@ -29,7 +29,7 @@ trait CacheFactory
         }
 
         $config = DI::config()->get('cache/' . ($name ?: 'default'));
-        $item = Cache::create($config);
+        $item = new Cache($config);
 
         return DI::set(__METHOD__, $name, $item);
     }

@@ -47,21 +47,10 @@ class Cache
     private $ttl;
 
     /**
-     *
-     */
-    private function __construct()
-    {
-    }
-
-    /**
      * @param array $config
-     *
-     * @return $this
      */
-    public static function create($config) : self
+    public function __construct(array $config)
     {
-        $cache = new static();
-
         if (!isset($config['type'])) {
             throw new \InvalidArgumentException('Missing type');
         } else {
@@ -70,13 +59,13 @@ class Cache
             $storageClass[] = 'Storage';
             $storageClass[] = $config['type'];
             $storageClass = implode('\\', $storageClass);
-            $cache->type = $config['type'];
+            $this->type = $config['type'];
         }
 
         if (!isset($config['prefix'])) {
             throw new \InvalidArgumentException('Missing prefix');
         } else {
-            $cache->prefix = $config['prefix'];
+            $this->prefix = $config['prefix'];
         }
 
         if (isset($config['ttl'])) {
@@ -84,22 +73,22 @@ class Cache
                 throw new \InvalidArgumentException(sprintf("Invalid ttl '%s'", $config['ttl']));
             }
 
-            $cache->ttl = $config['ttl'];
+            $this->ttl = $config['ttl'];
         }
 
         /** @var AbstractStorage $storage */
         $storage = new $storageClass($config['config'] ?? null);
-        $cache->storage = $storage;
+        $this->storage = $storage;
 
         if ($storage->isVersionPrefix() == true) {
-            $cache->prefixId = (int) $storage->get($cache->prefix);
-            if (!$cache->prefixId) {
-                $storage->increment($cache->prefix, 1);
-                $cache->prefixId = 1;
+            $this->prefixId = (int) $storage->get($this->prefix);
+            if (!$this->prefixId) {
+                $storage->increment($this->prefix, 1);
+                $this->prefixId = 1;
             }
         }
 
-        return $cache;
+        return $this;
     }
 
     /**
