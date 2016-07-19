@@ -81,6 +81,7 @@ class Memory extends AbstractStorage
     {
         if (isset($this->data[$key])) {
             unset($this->data[$key]);
+
             return true;
         } else {
             return false;
