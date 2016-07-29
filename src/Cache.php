@@ -211,7 +211,7 @@ class Cache
             $value = self::unserialize($value);
         }
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         if (!$value && $callable) {
             $value = $callable();
@@ -260,7 +260,7 @@ class Cache
 
         $event->addData(['size' => $size]);
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $keys;
     }
@@ -284,7 +284,7 @@ class Cache
 
         $value = $this->storage->set($this->getFinalKey($key), $value, min($ttl, $this->ttl));
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         if ($tags) {
             $this->saveTags($key, $tags);
@@ -324,7 +324,7 @@ class Cache
             $keys[$key] = $multi[$this->getFinalKey($key)];
         }
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         if ($tags) {
             foreach ($keys as $key => $value) {
@@ -349,7 +349,7 @@ class Cache
         $value = $this->storage->delete($this->getFinalKey($key));
 
         $event->addData(['size' => $value ? 1 : 0]);
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $value;
     }
@@ -372,7 +372,7 @@ class Cache
         $count = $this->storage->multidelete($keys);
 
         $event->addData(['size' => $count]);
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $count;
     }
@@ -404,7 +404,7 @@ class Cache
         $count = $this->storage->multidelete($keys);
 
         $event->addData(['size' => $count]);
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $count;
     }
@@ -420,7 +420,7 @@ class Cache
 
         $this->storage->flush($this->prefix, $this->prefixId);
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return true;
     }
@@ -439,7 +439,7 @@ class Cache
 
         $value = $this->storage->increment($this->getFinalKey($key), $value);
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $value;
     }
@@ -458,7 +458,7 @@ class Cache
 
         $value = $this->storage->decrement($this->getFinalKey($key), $value);
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
 
         return $value;
     }
@@ -496,6 +496,6 @@ class Cache
 
         $event->addData(['size' => $size]);
 
-        self::dispatcher()->emit($event);
+        self::emit($event);
     }
 }
