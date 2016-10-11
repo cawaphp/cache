@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types=1);
+declare (strict_types = 1);
 
 namespace Cawa\Cache\Storage;
 
@@ -18,11 +18,9 @@ use Cawa\Net\Uri;
 class Redis extends AbstractStorage
 {
     /**
-     * Indicates is APCu is supported.
-     *
      * @var \Redis
      */
-    protected $client = false;
+    protected $client;
 
     /**
      * @param string|Uri $connectionString

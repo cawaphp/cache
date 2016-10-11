@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types=1);
+declare (strict_types = 1);
 
 namespace Cawa\Cache;
 
@@ -97,7 +97,7 @@ class Cache
      *
      * @return TimerEvent
      */
-    public function getTimerEvent(string $method, $key = null) : TimerEvent
+    protected function getTimerEvent(string $method, $key = null) : TimerEvent
     {
         $event = new TimerEvent('cache.' .  $this->type);
 
