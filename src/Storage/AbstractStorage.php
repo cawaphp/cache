@@ -27,7 +27,7 @@ abstract class AbstractStorage
      *
      * @param string $key
      *
-     * @return bool|mixed
+     * @return bool|string
      */
     abstract public function get(string $key);
 

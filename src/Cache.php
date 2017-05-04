@@ -13,6 +13,8 @@ declare (strict_types = 1);
 
 namespace Cawa\Cache;
 
+use Cawa\Cache\Serializer\Php;
+use Cawa\Cache\Serializer\SerializerInterface;
 use Cawa\Cache\Storage\AbstractStorage;
 use Cawa\Events\DispatcherFactory;
 use Cawa\Events\TimerEvent;
@@ -47,6 +49,11 @@ class Cache
     private $ttl;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * @param array $config
      */
     public function __construct(array $config)
@@ -74,6 +81,13 @@ class Cache
             }
 
             $this->ttl = $config['ttl'];
+        }
+
+        if (isset($config['serializer'])) {
+            $class = $config['serializer'];
+            $this->serializer = new $class();
+        } else {
+            $this->serializer = new Php();
         }
 
         /** @var AbstractStorage $storage */
@@ -133,64 +147,6 @@ class Cache
     }
 
     /**
-     * @var callable
-     */
-    protected static $serialize = [__CLASS__, 'defaultSerialize'];
-
-    /**
-     * @param mixed $data
-     *
-     * @return string
-     */
-    protected static function serialize($data) : string
-    {
-        return call_user_func(self::$serialize, $data);
-    }
-
-    /**
-     * @param mixed $data
-     *
-     * @return string
-     */
-    protected static function defaultSerialize($data) : string
-    {
-        $value = serialize($data);
-        $compress = gzcompress($value, 1);
-        if (strlen($compress) > strlen($value)) {
-            return $value;
-        } else {
-            return $compress;
-        }
-    }
-
-    /**
-     * @var callable
-     */
-    protected static $unserialize = [__CLASS__, 'defaultUnserialize'];
-
-    /**
-     * @param string $data
-     *
-     * @return mixed
-     */
-    protected static function unserialize(string $data)
-    {
-        return call_user_func(self::$unserialize, $data);
-    }
-
-    /**
-     * @param string $data
-     *
-     * @return mixed
-     */
-    protected static function defaultUnserialize(string $data)
-    {
-        $value = @gzuncompress($data);
-
-        return !$value ? unserialize($data) : unserialize($value);
-    }
-
-    /**
      * Get an item from the cache.
      *
      * @param string $key
@@ -208,7 +164,7 @@ class Cache
 
         if ($value) {
             $event->addData(['size' => strlen($value)]);
-            $value = self::unserialize($value);
+            $value = $this->serializer->unserialize($value);
         }
 
         self::emit($event);
@@ -249,7 +205,7 @@ class Cache
                 $value = $multi[$this->getFinalKey($key)];
                 if (!is_bool($value)) {
                     $size += strlen($value);
-                    $keys[$key] = self::unserialize($value);
+                    $keys[$key] = $this->serializer->unserialize($value);
                 } else {
                     $keys[$key] = false;
                 }
@@ -279,7 +235,7 @@ class Cache
     {
         $event = $this->getTimerEvent(__METHOD__, $key);
 
-        $value = self::serialize($value);
+        $value = $this->serializer->serialize($value);
         $event->addData(['size' => strlen($value)]);
 
         $value = $this->storage->set($this->getFinalKey($key), $value, min($ttl, $this->ttl));
@@ -311,8 +267,9 @@ class Cache
         $multiKeys = [];
         $size = 0;
         foreach ($keys as $key => $value) {
-            $serialize = self::serialize($value);
+            $serialize = $this->serializer->serialize($value);
             $size += strlen($serialize);
+
             $multiKeys[$this->getFinalKey($key)] = $serialize;
         }
 
@@ -393,7 +350,7 @@ class Cache
         $value = $this->storage->get($tagKey);
 
         if ($value) {
-            $keys = self::unserialize($value);
+            $keys = $this->serializer->unserialize($value);
             foreach ($keys as $index => $key) {
                 $keys[$index] = $this->getFinalKey($key);
             }
@@ -481,14 +438,14 @@ class Cache
 
             if ($value) {
                 $size += strlen($value);
-                $keys = self::unserialize($value);
+                $keys = $this->serializer->unserialize($value);
             }
 
             if (array_search($key, $keys) === false) {
                 $keys[] = $key;
             }
 
-            $keys = self::serialize($keys);
+            $keys = $this->serializer->serialize($keys);
             $size += strlen($keys);
 
             $this->storage->set($tagKey, $keys);
