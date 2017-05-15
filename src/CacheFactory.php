@@ -24,13 +24,17 @@ trait CacheFactory
      */
     private static function cache(string $name = null) : Cache
     {
-        list($container, $config, $return) = DI::detect(__METHOD__, 'cache', $name);
+        list($container, $config, $return) = DI::detect(__METHOD__, 'cache', $name, false);
 
         if ($return) {
             return $return;
         }
 
-        $item = new Cache($config);
+        if ($config) {
+            $item = new Cache($config);
+        } else {
+            $item = new Cache(['type' => 'Noop', 'prefix' => uniqid()]);
+        }
 
         return DI::set(__METHOD__, $container, $item);
     }
