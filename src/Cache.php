@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Cawa\Cache;
 
@@ -113,7 +113,7 @@ class Cache
      */
     protected function getTimerEvent(string $method, $key = null) : TimerEvent
     {
-        $event = new TimerEvent('cache.' .  $this->type);
+        $event = new TimerEvent('cache.' . $this->type);
 
         $data = [
             'method' => substr(strrchr($method, ':'), 1),
@@ -180,7 +180,7 @@ class Cache
     /**
      * Get multiple item from the cache.
      * Result will be associative array with key => $value
-     * $value is false if the item doesn't exists
+     * $value is false if the item doesn't exists.
      *
      * @param array $keys
      *
@@ -252,7 +252,7 @@ class Cache
     /**
      * Store multiple item from the cache.
      * Result will be associative array with key => $result
-     * $result is true or false
+     * $result is true or false.
      *
      * @param array $keys
      * @param int $ttl
@@ -335,7 +335,7 @@ class Cache
     }
 
     /**
-     * Remove all associated keys with a tag
+     * Remove all associated keys with a tag.
      *
      * @param string $tag
      *

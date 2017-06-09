@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Cawa\Cache\Serializer;
 
@@ -20,7 +20,7 @@ interface SerializerInterface
      *
      * @return string|mixed
      */
-    public static function serialize($data) : string ;
+    public static function serialize($data) : string;
 
     /**
      * @param string $data

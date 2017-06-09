@@ -9,14 +9,14 @@
  * file that was distributed with this source code.
  */
 
-declare (strict_types = 1);
+declare(strict_types = 1);
 
 namespace Cawa\Cache\Storage;
 
 abstract class AbstractStorage
 {
     /**
-     * Is this storage need to be prefix with version
+     * Is this storage need to be prefix with version.
      *
      * @return bool
      */
@@ -34,7 +34,7 @@ abstract class AbstractStorage
     /**
      * Get multiple item from the cache.
      * Result will be associative array with key => $value
-     * $value is false if the item doesn't exists
+     * $value is false if the item doesn't exists.
      *
      * @param array $keys
      *
@@ -56,7 +56,7 @@ abstract class AbstractStorage
     /**
      * Store multiple item from the cache.
      * Result will be associative array with key => $result
-     * $result is true or false
+     * $result is true or false.
      *
      * @param array $keys
      * @param int $ttl
@@ -94,7 +94,7 @@ abstract class AbstractStorage
     abstract public function flush(string $prefix, int $prefixId = null) : int;
 
     /**
-     * Flush all data of current storage regardless of prefix
+     * Flush all data of current storage regardless of prefix.
      *
      * @return bool
      */
