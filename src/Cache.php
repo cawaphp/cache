@@ -238,7 +238,7 @@ class Cache
         $value = $this->serializer->serialize($value);
         $event->addData(['size' => strlen($value)]);
 
-        $value = $this->storage->set($this->getFinalKey($key), $value, min($ttl, $this->ttl));
+        $value = $this->storage->set($this->getFinalKey($key), $value, $ttl ? $ttl : $this->ttl);
 
         self::emit($event);
 
@@ -275,7 +275,7 @@ class Cache
 
         $event->addData(['size' => $size]);
 
-        $multi = $this->storage->multiset($multiKeys, min($ttl, $this->ttl));
+        $multi = $this->storage->multiset($multiKeys, $ttl ? $ttl : $this->ttl);
 
         foreach ($keys as $key => $value) {
             $keys[$key] = $multi[$this->getFinalKey($key)];
